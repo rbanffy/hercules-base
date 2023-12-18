@@ -54,5 +54,5 @@ RUN DEBIAN_FRONTEND=noninteractive \
         unzip \
         wget \
         zlib1g-dev ; \
-        apt-get -u autoremove ; \
+        apt-get -y autoremove ; \
     rm -rf /var/lib/apt/lists/* *.zip hyperion SoftFloat-3a
