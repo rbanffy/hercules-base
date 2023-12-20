@@ -2,6 +2,8 @@
 
 FROM debian:testing-slim
 
+ENV LD_LIBRARY_PATH=/usr/local/lib
+
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update && \
     apt-get -y dist-upgrade && \
@@ -56,3 +58,5 @@ RUN DEBIAN_FRONTEND=noninteractive \
         zlib1g-dev ; \
         apt-get -y autoremove ; \
     rm -rf /var/lib/apt/lists/* *.zip hyperion SoftFloat-3a
+
+CMD [ "/usr/local/bin/hercules" ]
