@@ -30,7 +30,6 @@ build: ## Builds the Docker images
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-amd64 --platform=linux/amd64 .
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-arm64 --platform=linux/arm64 .
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-armv6 --platform=linux/arm/v6 .
-	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-armv7 --platform=linux/arm/v7 .
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-s390x --platform=linux/s390x .
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-ppc64le --platform=linux/ppc64le .
 
@@ -38,7 +37,6 @@ upload_images: ## Uploads the docker images
 	docker image push ${USER}/hercules-base:${IMAGE_TAG}-amd64
 	docker image push ${USER}/hercules-base:${IMAGE_TAG}-arm64
 	docker image push ${USER}/hercules-base:${IMAGE_TAG}-armv6
-	docker image push ${USER}/hercules-base:${IMAGE_TAG}-armv7
 	docker image push ${USER}/hercules-base:${IMAGE_TAG}-s390x
 	docker image push ${USER}/hercules-base:${IMAGE_TAG}-ppc64le
 
@@ -47,7 +45,6 @@ upload: upload_images ## Uploads the manifest
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-amd64 \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-amd64 \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-armv6 \
-		--amend ${USER}/hercules-base:${IMAGE_TAG}-armv7 \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-s390x \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-ppc64le
 	docker manifest push ${USER}/hercules-base:${IMAGE_TAG}
