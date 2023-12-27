@@ -43,7 +43,7 @@ upload_images: ## Uploads the docker images
 upload: upload_images ## Uploads the manifest
 	docker manifest create ${USER}/hercules-base:${IMAGE_TAG} \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-amd64 \
-		--amend ${USER}/hercules-base:${IMAGE_TAG}-amd64 \
+		--amend ${USER}/hercules-base:${IMAGE_TAG}-arm64 \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-armv6 \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-s390x \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-ppc64le
