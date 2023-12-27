@@ -6,8 +6,6 @@ SHELL = /bin/sh
 BRANCH = $(shell git branch --show-current)
 
 ifeq ($(BRANCH),main)
-	IMAGE_TAG = stable
-else ifeq ($(BRANCH),develop)
 	IMAGE_TAG = latest
 else
 	IMAGE_TAG = $(BRANCH)
