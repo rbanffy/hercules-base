@@ -4,96 +4,163 @@ FROM debian:testing-slim
 
 ENV LD_LIBRARY_PATH=/usr/local/lib
 
-RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get update && \
-    apt-get -y dist-upgrade && \
-    apt-get -y install \
-        autoconf \
-        automake \
-        build-essential \
-        cmake \
-        flex \
-        gawk \
-        git \
-        libbz2-dev \
-        libcap2-bin \
-        libltdl-dev \
-        libtool-bin \
-        m4 \
-        time \
-        unzip \
-        wget \
-        zlib1g-dev && \
-    cd /tmp && \
-    # Create external package destination folder.
-    mkdir -p /tmp/extpkgs/SoftFloat /tmp/extpkgs/crypto /tmp/extpkgs/telnet /tmp/extpkgs/decNumber && \
-    # Download the external packages.
-    wget https://codeload.github.com/SDL-Hercules-390/SoftFloat/zip/refs/heads/master -O /tmp/softfloat-master.zip && \
-    wget https://codeload.github.com/SDL-Hercules-390/crypto/zip/refs/heads/master -O /tmp/crypto-master.zip && \
-    wget https://codeload.github.com/SDL-Hercules-390/telnet/zip/refs/heads/master -O /tmp/telnet-master.zip && \
-    wget https://codeload.github.com/SDL-Hercules-390/decNumber/zip/refs/heads/master -O /tmp/decnumber-master.zip && \
-    # Download and expand the latest Hercules.
-    wget https://codeload.github.com/Hercules-Aethra/aethra/zip/refs/heads/master -O /tmp/aethra-master.zip && \
-    unzip /tmp/aethra-master.zip && \
-    # Remove pre-built parts.
-    # rm -rfv /tmp/hyperion-master/SoftFloat \
-    #     /tmp/hyperion-master/crypto \
-    #     /tmp/hyperion-master/telnet \
-    #     /tmp/hyperion-master/decNumber && \
-    # # Re-add their directories
-    # mkdir -v /tmp/hyperion-master/SoftFloat \
-    #     /tmp/hyperion-master/crypto \
-    #     /tmp/hyperion-master/telnet \
-    #     /tmp/hyperion-master/decNumber && \
-    # Build SoftFloat.
-    unzip /tmp/softfloat-master.zip && \
-    mkdir /tmp/softfloat && \
-    cd /tmp/softfloat && \
-    /tmp/SoftFloat-master/build --pkgname . --all --install /tmp/extpkgs/SoftFloat && \
-    cd /tmp && \
-    # Build crypto.
-    unzip /tmp/crypto-master.zip && \
-    mkdir /tmp/crypto && \
-    cd /tmp/crypto && \
-    /tmp/crypto-master/build --pkgname . --all --install /tmp/extpkgs/crypto && \
-    cd /tmp && \
-    # Build telnet.
-    unzip /tmp/telnet-master.zip && \
-    mkdir /tmp/telnet && \
-    cd /tmp/telnet && \
-    /tmp/telnet-master/build --pkgname . --all --install /tmp/extpkgs/telnet && \
-    cd /tmp && \
-    # Build decNumber.
-    unzip /tmp/decnumber-master.zip && \
-    mkdir /tmp/decnumber && \
-    cd /tmp/decnumber && \
-    /tmp/decNumber-master/build --pkgname . --all --install /tmp/extpkgs/decNumber && \
-    cd /tmp && \
-    # Build the latest Hercules.
-    cd /tmp/aethra-master && \
-    ./autogen.sh && \
-    ./configure --enable-extpkgs=/tmp/extpkgs && \
+LABEL maintainer="Ricardo Bánffy <rbanffy@gmail.com>"
+
+ARG USERNAME=hercules
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+ARG TARGETPLATFORM
+ARG TARGETARCH
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    DEBIAN_FRONTEND=noninteractive \
+    groupadd --gid $USER_GID $USERNAME && \
+    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME && \
+    apt update && \
+    apt -y full-upgrade && \
+    apt -y install --no-install-recommends \
+    apt-utils \
+    autoconf \
+    automake \
+    build-essential \
+    ca-certificates \
+    cmake \
+    flex \
+    gawk \
+    git \
+    libbz2-dev \
+    libcap2-bin \
+    libltdl-dev \
+    libregina3-dev \
+    libtool-bin \
+    m4 \
+    sysvbanner \
+    time \
+    unzip \
+    wget \
+    zlib1g-dev && \
+    cd /home/$USERNAME/ && \
+    # Get the main repo
+    git clone https://github.com/SDL-Hercules-390/hyperion.git && \
+    # Remove Hyperion's distribution bundled amd64 binaries
+    rm -v /home/$USERNAME/hyperion/crypto/lib/* && \
+    rm -v /home/$USERNAME/hyperion/decNumber/lib/* && \
+    rm -v /home/$USERNAME/hyperion/SoftFloat/lib/* && \
+    rm -v /home/$USERNAME/hyperion/telnet/lib/* && \
+    rm -rf /home/$USERNAME/hyperion/.git && \
+    # Get the external modules
+    git clone https://github.com/SDL-Hercules-390/crypto.git && \
+    git clone https://github.com/SDL-Hercules-390/decNumber.git && \
+    git clone https://github.com/SDL-Hercules-390/SoftFloat.git && \
+    git clone https://github.com/SDL-Hercules-390/telnet.git
+
+    # Figure out the library destination
+RUN echo "TARGETARCH is ${TARGETARCH}"; \
+    if [ "${TARGETARCH}" = "ppc64le" ]; then \
+        export DEST="ppc"; \
+        export WORD_LENGTH="64";\
+    elif [ "${TARGETARCH}" = "arm64" ]; then \
+        export DEST="aarch64"; \
+        export WORD_LENGTH="64"; \
+    elif [ "${TARGETARCH}" = "arm" ]; then \
+        export DEST="arm"; \
+        export WORD_LENGTH="32"; \
+    elif [ "${TARGETARCH}" = "amd64" ]; then \
+        export DEST=""; \
+        export WORD_LENGTH="64"; \
+    else \
+        echo "Unsuported platform ${TARGETPLATFORM}"; \
+        exit 3; \
+    fi && \
+    echo "${TARGETARCH} mapped to \"$DEST\""; \
+    # Build the external crypto module
+    mkdir -v /home/$USERNAME/crypto32.Release && \
+    cd /home/$USERNAME/crypto32.Release && \
+    cmake ../crypto && \
     make && \
-    make install && \
-    # Remove no longer needed packages and clean up the image.
-    apt-get -y remove \
-        autoconf \
-        automake \
-        build-essential \
-        cmake \
-        flex \
-        gawk \
-        git \
-        libbz2-dev \
-        libcap2-bin \
-        libltdl-dev \
-        libtool-bin \
-        m4 \
-        time \
-        unzip \
-        wget \
-        zlib1g-dev ; \
-        apt-get -y autoremove ; \
-    rm -rfv /var/lib/apt/lists/* *.zip /tmp/aethra-master
+    mkdir -v /home/$USERNAME/crypto64.Release && \
+    cd /home/$USERNAME/crypto64.Release && \
+    cmake ../crypto && \
+    make && \
+    mkdir -pv /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
+    cp -v libcrypto*.a /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
+    # Build the external decNumber module
+    mkdir -v /home/$USERNAME/decNumber32.Release && \
+    cd /home/$USERNAME/decNumber32.Release && \
+    cmake ../decNumber && \
+    make; \
+    mkdir -v /home/$USERNAME/decNumber64.Release && \
+    cd /home/$USERNAME/decNumber64.Release && \
+    cmake ../decNumber && \
+    make && \
+    mkdir -pv /home/$USERNAME/hyperion/decNumber/lib/${DEST} && \
+    cp -v libdecNumber*.a /home/$USERNAME/hyperion/decNumber/lib/${DEST} && \
+    # Build the external SoftFloat module
+    mkdir -v /home/$USERNAME/SoftFloat32.Release && \
+    cd /home/$USERNAME/SoftFloat32.Release && \
+    cmake ../SoftFloat && \
+    make && \
+    mkdir -v /home/$USERNAME/SoftFloat64.Release && \
+    cd /home/$USERNAME/SoftFloat64.Release && \
+    cmake ../SoftFloat && \
+    make && \
+    mkdir -pv /home/$USERNAME/hyperion/SoftFloat/lib/${DEST} && \
+    cp -v libSoftFloat*.a /home/$USERNAME/hyperion/SoftFloat/lib/${DEST} && \
+    # Build the external telnet module
+    mkdir -v /home/$USERNAME/telnet32.Release && \
+    cd /home/$USERNAME/telnet32.Release && \
+    cmake ../telnet && \
+    make && \
+    mkdir -v /home/$USERNAME/telnet64.Release && \
+    cd /home/$USERNAME/telnet64.Release && \
+    cmake ../telnet && \
+    make && \
+    mkdir -pv /home/$USERNAME/hyperion/telnet/lib/${DEST} && \
+    cp -v libtelnet*.a /home/$USERNAME/hyperion/telnet/lib/${DEST}
+
+# Build Hercules
+RUN cd /home/$USERNAME/hyperion && \
+    rm -rfv .git && \
+    if [ "${TARGETARCH}" = "arm" ]; then \
+        ./configure --host=arm-linux-gnueabihf -target=arm; \
+    else \
+        ./configure; \
+    fi && \
+    # make && \
+    # make install && \
+    # Remove unwanted files. Useful when it's a single step.
+    # apt purge -y \
+    # apt-utils \
+    # autoconf \
+    # automake \
+    # build-essential \
+    # ca-certificates \
+    # cmake \
+    # flex \
+    # gawk \
+    # git \
+    # libbz2-dev \
+    # libcap2-bin \
+    # libltdl-dev \
+    # libregina3-dev \
+    # libtool-bin \
+    # m4 \
+    # sysvbanner \
+    # time \
+    # unzip \
+    # wget \
+    # zlib1g-dev && \
+    # apt -y autoremove && \
+    # rm -rfv /var/lib/apt/lists/* *.zip hyperion *.Release SoftFloat64 decNumber telnet crypto && \
+    chown -R $USERNAME:$USERNAME /home/$USERNAME
+
+USER $USERNAME
+WORKDIR /home/$USERNAME
+
+EXPOSE 3270/TCP
+EXPOSE 8038/TCP
+
+CMD ["hercules"]
 
 CMD [ "/usr/local/bin/hercules" ]
