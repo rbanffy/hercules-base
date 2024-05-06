@@ -28,6 +28,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     cmake \
     flex \
     gawk \
+    gcc-14 \
     git \
     libbz2-dev \
     libcap2-bin \
@@ -139,6 +140,7 @@ RUN cd /home/$USERNAME/hyperion && \
     # cmake \
     # flex \
     # gawk \
+    # gcc-14 \
     # git \
     # libbz2-dev \
     # libcap2-bin \
