@@ -162,5 +162,3 @@ EXPOSE 3270/TCP
 EXPOSE 8038/TCP
 
 CMD ["hercules"]
-
-CMD [ "/usr/local/bin/hercules" ]
