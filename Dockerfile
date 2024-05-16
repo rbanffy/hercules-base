@@ -54,22 +54,22 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     git clone https://github.com/SDL-Hercules-390/crypto.git && \
     git clone https://github.com/SDL-Hercules-390/decNumber.git && \
     git clone https://github.com/SDL-Hercules-390/SoftFloat.git && \
-    git clone https://github.com/SDL-Hercules-390/telnet.git
+    git clone https://github.com/SDL-Hercules-390/telnet.git && \
 
     # Figure out the library destination
-RUN echo "TARGETARCH is ${TARGETARCH}"; \
+    echo "TARGETARCH is ${TARGETARCH}"; \
     if [ "${TARGETARCH}" = "ppc64le" ]; then \
         export DEST="ppc"; \
-        export WORD_LENGTH="64";\
+    #   export WORD_LENGTH="64";\
     elif [ "${TARGETARCH}" = "arm64" ]; then \
         export DEST="aarch64"; \
-        export WORD_LENGTH="64"; \
+    #   export WORD_LENGTH="64"; \
     elif [ "${TARGETARCH}" = "arm" ]; then \
         export DEST="arm"; \
-        export WORD_LENGTH="32"; \
+    #   export WORD_LENGTH="32"; \
     elif [ "${TARGETARCH}" = "amd64" ]; then \
         export DEST=""; \
-        export WORD_LENGTH="64"; \
+    #   export WORD_LENGTH="64"; \
     else \
         echo "Unsuported platform ${TARGETPLATFORM}"; \
         exit 3; \
@@ -79,46 +79,46 @@ RUN echo "TARGETARCH is ${TARGETARCH}"; \
     mkdir -v /home/$USERNAME/crypto32.Release && \
     cd /home/$USERNAME/crypto32.Release && \
     cmake ../crypto && \
-    make && \
+    make install && \
     mkdir -v /home/$USERNAME/crypto64.Release && \
     cd /home/$USERNAME/crypto64.Release && \
     cmake ../crypto && \
-    make && \
+    make install && \
     mkdir -pv /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
-    cp -v libcrypto*.a /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
+    cp -v /usr/local/lib/libcrypto*.a /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
     # Build the external decNumber module
     mkdir -v /home/$USERNAME/decNumber32.Release && \
     cd /home/$USERNAME/decNumber32.Release && \
     cmake ../decNumber && \
-    make; \
+    make install && \
     mkdir -v /home/$USERNAME/decNumber64.Release && \
     cd /home/$USERNAME/decNumber64.Release && \
     cmake ../decNumber && \
-    make && \
+    make install && \
     mkdir -pv /home/$USERNAME/hyperion/decNumber/lib/${DEST} && \
-    cp -v libdecNumber*.a /home/$USERNAME/hyperion/decNumber/lib/${DEST} && \
+    cp -v /usr/local/lib/libdecNumber*.a /home/$USERNAME/hyperion/decNumber/lib/${DEST} && \
     # Build the external SoftFloat module
     mkdir -v /home/$USERNAME/SoftFloat32.Release && \
     cd /home/$USERNAME/SoftFloat32.Release && \
     cmake ../SoftFloat && \
-    make && \
+    make install && \
     mkdir -v /home/$USERNAME/SoftFloat64.Release && \
     cd /home/$USERNAME/SoftFloat64.Release && \
     cmake ../SoftFloat && \
-    make && \
+    make install && \
     mkdir -pv /home/$USERNAME/hyperion/SoftFloat/lib/${DEST} && \
-    cp -v libSoftFloat*.a /home/$USERNAME/hyperion/SoftFloat/lib/${DEST} && \
+    cp -v /usr/local/lib/libSoftFloat*.a /home/$USERNAME/hyperion/SoftFloat/lib/${DEST} && \
     # Build the external telnet module
     mkdir -v /home/$USERNAME/telnet32.Release && \
     cd /home/$USERNAME/telnet32.Release && \
     cmake ../telnet && \
-    make && \
+    make install && \
     mkdir -v /home/$USERNAME/telnet64.Release && \
     cd /home/$USERNAME/telnet64.Release && \
     cmake ../telnet && \
-    make && \
+    make install && \
     mkdir -pv /home/$USERNAME/hyperion/telnet/lib/${DEST} && \
-    cp -v libtelnet*.a /home/$USERNAME/hyperion/telnet/lib/${DEST}
+    cp -v /usr/local/lib/libtelnet*.a /home/$USERNAME/hyperion/telnet/lib/${DEST}
 
 # Build Hercules
 RUN cd /home/$USERNAME/hyperion && \
@@ -127,9 +127,13 @@ RUN cd /home/$USERNAME/hyperion && \
         ./configure --host=arm-linux-gnueabihf -target=arm; \
     else \
         ./configure; \
-    fi && \
-    # make && \
-    # make install && \
+    fi 
+
+# RUN cd /home/$USERNAME/hyperion && \
+#     make
+
+RUN cd /home/$USERNAME/hyperion && \
+    # make install
     # Remove unwanted files. Useful when it's a single step.
     # apt purge -y \
     # apt-utils \
