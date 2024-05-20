@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM debian:testing-slim
+FROM debian:stable-slim
 
 ENV LD_LIBRARY_PATH=/usr/local/lib
 
