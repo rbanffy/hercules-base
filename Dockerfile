@@ -26,7 +26,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
     cmake \
     flex \
     gawk \
-    gcc-14 \
     git \
     libbz2-dev \
     libcap2-bin \
