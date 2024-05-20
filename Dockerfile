@@ -118,22 +118,17 @@ RUN DEBIAN_FRONTEND=noninteractive \
     cmake ../telnet && \
     make install && \
     mkdir -pv /home/$USERNAME/hyperion/telnet/lib/${DEST} && \
-    cp -v /usr/local/lib/libtelnet*.a /home/$USERNAME/hyperion/telnet/lib/${DEST}
-
-# Build Hercules
-RUN cd /home/$USERNAME/hyperion && \
+    cp -v /usr/local/lib/libtelnet*.a /home/$USERNAME/hyperion/telnet/lib/${DEST} && \
+    # Build Hercules
+    cd /home/$USERNAME/hyperion && \
     rm -rfv .git && \
     if [ "${TARGETARCH}" = "arm" ]; then \
         ./configure --host=arm-linux-gnueabihf -target=arm; \
     else \
         ./configure; \
-    fi 
-
-# RUN cd /home/$USERNAME/hyperion && \
-#     make
-
-RUN cd /home/$USERNAME/hyperion && \
-    # make install
+    fi && \
+    make && \
+    make install && \
     # Remove unwanted files. Useful when it's a single step.
     # apt purge -y \
     # apt-utils \
