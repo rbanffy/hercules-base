@@ -67,6 +67,9 @@ RUN DEBIAN_FRONTEND=noninteractive \
     elif [ "${TARGETARCH}" = "amd64" ]; then \
         export DEST=""; \
     #   export WORD_LENGTH="64"; \
+    elif [ "${TARGETARCH}" = "s390x" ]; then \
+        export DEST="${TARGETARCH}"; \
+    #   export WORD_LENGTH="32"; \
     else \
         echo "Unsuported platform ${TARGETPLATFORM}"; \
         exit 3; \
