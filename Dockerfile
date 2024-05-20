@@ -47,14 +47,14 @@ RUN DEBIAN_FRONTEND=noninteractive \
     rm -v /home/$USERNAME/hyperion/decNumber/lib/* && \
     rm -v /home/$USERNAME/hyperion/SoftFloat/lib/* && \
     rm -v /home/$USERNAME/hyperion/telnet/lib/* && \
-    rm -rf /home/$USERNAME/hyperion/.git && \
+    rm -rfv /home/$USERNAME/hyperion/.git && \
     # Get the external modules
+    banner external modules && \
     git clone https://github.com/SDL-Hercules-390/crypto.git && \
     git clone https://github.com/SDL-Hercules-390/decNumber.git && \
     git clone https://github.com/SDL-Hercules-390/SoftFloat.git && \
     git clone https://github.com/SDL-Hercules-390/telnet.git && \
-
-    # Figure out the library destination
+    # Figure out the library destination 
     echo "TARGETARCH is ${TARGETARCH}"; \
     if [ "${TARGETARCH}" = "ppc64le" ]; then \
         export DEST="ppc"; \
