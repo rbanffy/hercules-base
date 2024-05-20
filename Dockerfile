@@ -12,14 +12,12 @@ ARG USER_GID=$USER_UID
 ARG TARGETPLATFORM
 ARG TARGETARCH
 
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    DEBIAN_FRONTEND=noninteractive \
+RUN DEBIAN_FRONTEND=noninteractive \
     groupadd --gid $USER_GID $USERNAME && \
     useradd --uid $USER_UID --gid $USER_GID -m $USERNAME && \
-    apt update && \
-    apt -y full-upgrade && \
-    apt -y install --no-install-recommends \
+    apt-get update && \
+    apt-get -y full-upgrade && \
+    apt-get -y install \
     apt-utils \
     autoconf \
     automake \
