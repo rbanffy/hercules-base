@@ -130,30 +130,29 @@ RUN DEBIAN_FRONTEND=noninteractive \
     make && \
     make install && \
     # Remove unwanted files. Useful when it's a single step.
-    # apt purge -y \
-    # apt-utils \
-    # autoconf \
-    # automake \
-    # build-essential \
-    # ca-certificates \
-    # cmake \
-    # flex \
-    # gawk \
-    # gcc-14 \
-    # git \
-    # libbz2-dev \
-    # libcap2-bin \
-    # libltdl-dev \
-    # libregina3-dev \
-    # libtool-bin \
-    # m4 \
-    # sysvbanner \
-    # time \
-    # unzip \
-    # wget \
-    # zlib1g-dev && \
-    # apt -y autoremove && \
-    # rm -rfv /var/lib/apt/lists/* *.zip hyperion *.Release SoftFloat64 decNumber telnet crypto && \
+    apt purge -y \
+    apt-utils \
+    autoconf \
+    automake \
+    build-essential \
+    ca-certificates \
+    cmake \
+    flex \
+    gawk \
+    git \
+    libbz2-dev \
+    libcap2-bin \
+    libltdl-dev \
+    libregina3-dev \
+    libtool-bin \
+    m4 \
+    sysvbanner \
+    time \
+    unzip \
+    wget \
+    zlib1g-dev && \
+    apt -y autoremove && \
+    rm -rfv /var/lib/apt/lists/* *.zip hyperion *.Release SoftFloat64 decNumber telnet crypto && \
     chown -R $USERNAME:$USERNAME /home/$USERNAME
 
 USER $USERNAME
