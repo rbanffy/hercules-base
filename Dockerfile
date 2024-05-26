@@ -13,6 +13,9 @@ ARG TARGETPLATFORM
 ARG TARGETARCH
 
 RUN DEBIAN_FRONTEND=noninteractive \
+    echo "TARGETPLATFORM is '${TARGETPLATFORM}'"; \
+    echo "TARGETARCH is '${TARGETARCH}'"; \
+    echo "arch returns $( arch )"; \
     groupadd --gid $USER_GID $USERNAME && \
     useradd --uid $USER_UID --gid $USER_GID -m $USERNAME && \
     apt-get update && \
@@ -27,6 +30,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     flex \
     gawk \
     git \
+    libatomic1 \
     libbz2-dev \
     libcap2-bin \
     libltdl-dev \
@@ -38,44 +42,49 @@ RUN DEBIAN_FRONTEND=noninteractive \
     unzip \
     wget \
     zlib1g-dev && \
-    cd /home/$USERNAME/ && \
-    # Get the main repo
+    banner "Updated"
+
+RUN cd /home/$USERNAME/ && \
+    # Get the main repo.
     git clone https://github.com/SDL-Hercules-390/hyperion.git && \
-    # Remove Hyperion's distribution bundled amd64 binaries
+    # Remove Hyperion's distribution bundled amd64 binaries.
     rm -v /home/$USERNAME/hyperion/crypto/lib/* && \
     rm -v /home/$USERNAME/hyperion/decNumber/lib/* && \
     rm -v /home/$USERNAME/hyperion/SoftFloat/lib/* && \
     rm -v /home/$USERNAME/hyperion/telnet/lib/* && \
     rm -rfv /home/$USERNAME/hyperion/.git && \
-    # Get the external modules
+    # Get the external modules.
     banner external modules && \
     git clone https://github.com/SDL-Hercules-390/crypto.git && \
     git clone https://github.com/SDL-Hercules-390/decNumber.git && \
     git clone https://github.com/SDL-Hercules-390/SoftFloat.git && \
     git clone https://github.com/SDL-Hercules-390/telnet.git && \
-    # Figure out the library destination 
-    echo "TARGETARCH is ${TARGETARCH}"; \
-    if [ "${TARGETARCH}" = "ppc64le" ]; then \
+    # Figure out the library destination.
+    banner "${TARGETARCH}"; \
+    banner "$( arch )"; \
+    # Can't rely on TARGETARCH - it isn't present when not in emulation.
+    # This way we support running `docker build` natively on the target.
+    if [ "${TARGETARCH}" = "ppc64le" ] || [ "$( arch )" = "ppc64le" ]; then \
         export DEST="ppc"; \
     #   export WORD_LENGTH="64";\
-    elif [ "${TARGETARCH}" = "arm64" ]; then \
+    elif [ "${TARGETARCH}" = "arm64" ] || [ "$( arch )" = "aarch64" ]; then \
         export DEST="aarch64"; \
     #   export WORD_LENGTH="64"; \
-    elif [ "${TARGETARCH}" = "arm" ]; then \
+    elif [ "${TARGETARCH}" = "arm" ] || [ "$( arch )" = "armv7l" ] || [ "$( arch )" = "armv6l" ]; then \
         export DEST="${TARGETARCH}"; \
     #   export WORD_LENGTH="32"; \
-    elif [ "${TARGETARCH}" = "amd64" ]; then \
+    elif [ "${TARGETARCH}" = "amd64" ] || [ "$( arch )" = "amd64" ]; then \
         export DEST=""; \
     #   export WORD_LENGTH="64"; \
-    elif [ "${TARGETARCH}" = "s390x" ]; then \
+    elif [ "${TARGETARCH}" = "s390x" ] || [ "$( arch )" = "s390x" ]; then \
         export DEST="${TARGETARCH}"; \
     #   export WORD_LENGTH="32"; \
     else \
-        echo "Unsuported platform ${TARGETPLATFORM}"; \
+        echo "Unsuported platform ${TARGETPLATFORM} and/or architecture '$( arch )'"; \
         exit 3; \
     fi && \
-    echo "${TARGETARCH} mapped to \"$DEST\""; \
-    # Build the external crypto module
+    echo "'${TARGETARCH}/$( arch )' mapped to '$DEST'"; \
+    # Build the external crypto module.
     mkdir -v /home/$USERNAME/crypto32.Release && \
     cd /home/$USERNAME/crypto32.Release && \
     cmake ../crypto && \
@@ -86,7 +95,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     make install && \
     mkdir -pv /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
     cp -v /usr/local/lib/libcrypto*.a /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
-    # Build the external decNumber module
+    # Build the external decNumber module.
     mkdir -v /home/$USERNAME/decNumber32.Release && \
     cd /home/$USERNAME/decNumber32.Release && \
     cmake ../decNumber && \
@@ -127,6 +136,9 @@ RUN DEBIAN_FRONTEND=noninteractive \
     else \
         ./configure; \
     fi && \
+    banner "Configured"
+
+RUN cd /home/$USERNAME/ && \
     make && \
     make install && \
     # Remove unwanted files. Useful when it's a single step.
@@ -140,6 +152,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     flex \
     gawk \
     git \
+    libatomic1 \
     libbz2-dev \
     libcap2-bin \
     libltdl-dev \
