@@ -14,3 +14,10 @@ FROM rbanffy/hercules-base:stable
 
 The tag "stable" is generated from the main branch. The tag "latest" is from
 the "develop" branch. Other branches will generate tags named after the branch.
+
+## How do I build the images?
+
+You'll need Docker buildx and the QEMU environment set up properly (with
+armv6l, armv7l, arm64, ppc64le, and s390x). Then use `make build` to build
+local copies. Use `make help` or `make` to show a listing of targets and a
+description.

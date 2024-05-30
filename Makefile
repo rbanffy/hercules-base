@@ -1,4 +1,4 @@
-.PHONY: help build upload upload_images
+.PHONY: help archives build upload upload_images
 .DEFAULT_GOAL := help
 
 SHELL = /bin/sh
@@ -26,7 +26,14 @@ help: ## Displays this message.
 	@echo "Please use \`make <target>' where <target> is one of:"
 	@python3 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-build: ## Builds the Docker images
+archives: ## Zip files for the sources
+	wget -c https://github.com/SDL-Hercules-390/hyperion/archive/refs/heads/master.zip -O hyperion-master.zip
+	wget -c https://github.com/SDL-Hercules-390/crypto/archive/refs/heads/master.zip -O crypto-master.zip
+	wget -c https://github.com/SDL-Hercules-390/decNumber/archive/refs/heads/master.zip -O decNumber-master.zip
+	wget -c https://github.com/SDL-Hercules-390/SoftFloat/archive/refs/heads/master.zip -O SoftFloat-master.zip
+	wget -c https://github.com/SDL-Hercules-390/telnet/archive/refs/heads/master.zip -O telnet-master.zip
+
+build: archives ## Builds the Docker images
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-amd64 --platform=linux/amd64 --progress=plain .
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-arm64 --platform=linux/arm64 --progress=plain .
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-armv7 --platform=linux/arm/v7 --progress=plain .

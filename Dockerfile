@@ -12,6 +12,8 @@ ARG USER_GID=$USER_UID
 ARG TARGETPLATFORM
 ARG TARGETARCH
 
+COPY hyperion-master.zip crypto-master.zip decNumber-master.zip SoftFloat-master.zip telnet-master.zip .
+
 RUN DEBIAN_FRONTEND=noninteractive \
     echo "TARGETPLATFORM is '${TARGETPLATFORM}'"; \
     echo "TARGETARCH is '${TARGETARCH}'"; \
@@ -46,19 +48,19 @@ RUN DEBIAN_FRONTEND=noninteractive \
 
 RUN cd /home/$USERNAME/ && \
     # Get the main repo.
-    git clone https://github.com/SDL-Hercules-390/hyperion.git && \
+    unzip /hyperion-master.zip && \
+    mv -v hyperion-master hyperion && \
     # Remove Hyperion's distribution bundled amd64 binaries.
     rm -v /home/$USERNAME/hyperion/crypto/lib/* && \
     rm -v /home/$USERNAME/hyperion/decNumber/lib/* && \
     rm -v /home/$USERNAME/hyperion/SoftFloat/lib/* && \
     rm -v /home/$USERNAME/hyperion/telnet/lib/* && \
-    rm -rfv /home/$USERNAME/hyperion/.git && \
     # Get the external modules.
     banner external modules && \
-    git clone https://github.com/SDL-Hercules-390/crypto.git && \
-    git clone https://github.com/SDL-Hercules-390/decNumber.git && \
-    git clone https://github.com/SDL-Hercules-390/SoftFloat.git && \
-    git clone https://github.com/SDL-Hercules-390/telnet.git && \
+    unzip /crypto-master.zip && \
+    unzip /decNumber-master.zip && \
+    unzip /SoftFloat-master.zip && \
+    unzip /telnet-master.zip && \
     # Figure out the library destination.
     banner "${TARGETARCH}"; \
     banner "$( arch )"; \
