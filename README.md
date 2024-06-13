@@ -12,6 +12,12 @@ Use it as a starting point for your Dockerfile:
 FROM rbanffy/hercules-base:stable
 ```
 
+or, you feel adventurous:
+
+```dockerfile
+FROM rbanffy/hercules-base:latest
+```
+
 The tag "stable" is generated from the main branch. The tag "latest" is from
 the "develop" branch. Other branches will generate tags named after the branch.
 
