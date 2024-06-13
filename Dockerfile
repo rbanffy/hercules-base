@@ -12,7 +12,7 @@ ARG USER_GID=$USER_UID
 ARG TARGETPLATFORM
 ARG TARGETARCH
 
-COPY hyperion-master.zip crypto-master.zip decNumber-master.zip SoftFloat-master.zip telnet-master.zip .
+COPY hyperion-master.zip crypto-master.zip decNumber-master.zip SoftFloat-master.zip telnet-master.zip /
 
 RUN DEBIAN_FRONTEND=noninteractive \
     echo "TARGETPLATFORM is '${TARGETPLATFORM}'"; \
