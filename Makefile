@@ -1,4 +1,4 @@
-.PHONY: help archives build upload upload_images
+.PHONY: help archives build upload upload_images build
 .DEFAULT_GOAL := help
 
 SHELL = /bin/sh
@@ -26,18 +26,31 @@ help: ## Displays this message.
 	@echo "Please use \`make <target>' where <target> is one of:"
 	@python3 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-archives: ## Zip files for the sources
+archives: hyperion-master.zip crypto-master.zip decNumber-master.zip SoftFloat-master.zip telnet-master.zip ## Zip files for the sources
 	wget -c https://github.com/SDL-Hercules-390/hyperion/archive/refs/heads/master.zip -O hyperion-master.zip
 	wget -c https://github.com/SDL-Hercules-390/crypto/archive/refs/heads/master.zip -O crypto-master.zip
 	wget -c https://github.com/SDL-Hercules-390/decNumber/archive/refs/heads/master.zip -O decNumber-master.zip
 	wget -c https://github.com/SDL-Hercules-390/SoftFloat/archive/refs/heads/master.zip -O SoftFloat-master.zip
 	wget -c https://github.com/SDL-Hercules-390/telnet/archive/refs/heads/master.zip -O telnet-master.zip
 
-build: archives ## Builds the Docker images
+build: archives build_amd64 build_arm64 build_armv7 build_s390x build_ppc64le ## Builds the Docker images
+
+build_amd64:
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-amd64 --platform=linux/amd64 --progress=plain .
+
+build_arm64:	
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-arm64 --platform=linux/arm64 --progress=plain .
+
+build_armv6:
+	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-armv7 --platform=linux/arm/v6 --progress=plain .
+
+build_armv7:
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-armv7 --platform=linux/arm/v7 --progress=plain .
+
+build_s390x:
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-s390x --platform=linux/s390x --progress=plain .
+
+build_ppc64le:
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-ppc64le --platform=linux/ppc64le --progress=plain .
 
 upload_images: ## Uploads the docker images
