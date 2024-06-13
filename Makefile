@@ -42,7 +42,7 @@ build_arm64:
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-arm64 --platform=linux/arm64 --progress=plain .
 
 build_armv6:
-	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-armv7 --platform=linux/arm/v6 --progress=plain .
+	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-armv6 --platform=linux/arm/v6 --progress=plain .
 
 build_armv7:
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-armv7 --platform=linux/arm/v7 --progress=plain .
