@@ -84,7 +84,10 @@ RUN cd /home/$USERNAME/ && \
         exit 3; \
     fi && \
     echo "'${TARGETARCH}/$( arch )' mapped to '$DEST'"; \
+    banner external modules && \
     # Build the external crypto module.
+    banner crypto && \
+    unzip /crypto-master.zip && \
     mkdir -v /home/$USERNAME/crypto32.Release && \
     cd /home/$USERNAME/crypto32.Release && \
     cmake ../crypto && \
@@ -96,6 +99,10 @@ RUN cd /home/$USERNAME/ && \
     mkdir -pv /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
     cp -v /usr/local/lib/libcrypto*.a /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
     # Build the external decNumber module.
+    banner decNumber && \
+    cd /home/$USERNAME && \
+    unzip /decNumber-master.zip && \
+    ls -l .. && \
     mkdir -v /home/$USERNAME/decNumber32.Release && \
     cd /home/$USERNAME/decNumber32.Release && \
     cmake ../decNumber && \
@@ -107,6 +114,9 @@ RUN cd /home/$USERNAME/ && \
     mkdir -pv /home/$USERNAME/hyperion/decNumber/lib/${DEST} && \
     cp -v /usr/local/lib/libdecNumber*.a /home/$USERNAME/hyperion/decNumber/lib/${DEST} && \
     # Build the external SoftFloat module
+    banner SoftFloat && \
+    cd /home/$USERNAME && \
+    unzip /SoftFloat-master.zip && \
     mkdir -v /home/$USERNAME/SoftFloat32.Release && \
     cd /home/$USERNAME/SoftFloat32.Release && \
     cmake ../SoftFloat && \
@@ -118,6 +128,9 @@ RUN cd /home/$USERNAME/ && \
     mkdir -pv /home/$USERNAME/hyperion/SoftFloat/lib/${DEST} && \
     cp -v /usr/local/lib/libSoftFloat*.a /home/$USERNAME/hyperion/SoftFloat/lib/${DEST} && \
     # Build the external telnet module
+    banner telnet && \
+    cd /home/$USERNAME && \
+    unzip /telnet-master.zip && \
     mkdir -v /home/$USERNAME/telnet32.Release && \
     cd /home/$USERNAME/telnet32.Release && \
     cmake ../telnet && \
@@ -128,7 +141,7 @@ RUN cd /home/$USERNAME/ && \
     make install && \
     mkdir -pv /home/$USERNAME/hyperion/telnet/lib/${DEST} && \
     cp -v /usr/local/lib/libtelnet*.a /home/$USERNAME/hyperion/telnet/lib/${DEST} && \
-    # Build Hercules
+    # Build Hercules itself
     cd /home/$USERNAME/hyperion && \
     rm -rfv .git && \
     if [ "${TARGETARCH}" = "arm" ]; then \
