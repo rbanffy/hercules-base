@@ -90,11 +90,11 @@ RUN cd /home/$USERNAME/ && \
     unzip /crypto-master.zip && \
     mkdir -v /home/$USERNAME/crypto32.Release && \
     cd /home/$USERNAME/crypto32.Release && \
-    cmake ../crypto && \
+    cmake --trace-expand ../crypto-master && \
     make install && \
     mkdir -v /home/$USERNAME/crypto64.Release && \
     cd /home/$USERNAME/crypto64.Release && \
-    cmake ../crypto && \
+    cmake --trace-expand ../crypto-master && \
     make install && \
     mkdir -pv /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
     cp -v /usr/local/lib/libcrypto*.a /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
@@ -105,11 +105,11 @@ RUN cd /home/$USERNAME/ && \
     ls -l .. && \
     mkdir -v /home/$USERNAME/decNumber32.Release && \
     cd /home/$USERNAME/decNumber32.Release && \
-    cmake ../decNumber && \
+    cmake --trace-expand ../decNumber-master && \
     make install && \
     mkdir -v /home/$USERNAME/decNumber64.Release && \
     cd /home/$USERNAME/decNumber64.Release && \
-    cmake ../decNumber && \
+    cmake --trace-expand ../decNumber-master && \
     make install && \
     mkdir -pv /home/$USERNAME/hyperion/decNumber/lib/${DEST} && \
     cp -v /usr/local/lib/libdecNumber*.a /home/$USERNAME/hyperion/decNumber/lib/${DEST} && \
@@ -119,11 +119,11 @@ RUN cd /home/$USERNAME/ && \
     unzip /SoftFloat-master.zip && \
     mkdir -v /home/$USERNAME/SoftFloat32.Release && \
     cd /home/$USERNAME/SoftFloat32.Release && \
-    cmake ../SoftFloat && \
+    cmake --trace-expand ../SoftFloat-master && \
     make install && \
     mkdir -v /home/$USERNAME/SoftFloat64.Release && \
     cd /home/$USERNAME/SoftFloat64.Release && \
-    cmake ../SoftFloat && \
+    cmake --trace-expand ../SoftFloat-master && \
     make install && \
     mkdir -pv /home/$USERNAME/hyperion/SoftFloat/lib/${DEST} && \
     cp -v /usr/local/lib/libSoftFloat*.a /home/$USERNAME/hyperion/SoftFloat/lib/${DEST} && \
@@ -133,11 +133,11 @@ RUN cd /home/$USERNAME/ && \
     unzip /telnet-master.zip && \
     mkdir -v /home/$USERNAME/telnet32.Release && \
     cd /home/$USERNAME/telnet32.Release && \
-    cmake ../telnet && \
+    cmake --trace-expand ../telnet-master && \
     make install && \
     mkdir -v /home/$USERNAME/telnet64.Release && \
     cd /home/$USERNAME/telnet64.Release && \
-    cmake ../telnet && \
+    cmake --trace-expand ../telnet-master && \
     make install && \
     mkdir -pv /home/$USERNAME/hyperion/telnet/lib/${DEST} && \
     cp -v /usr/local/lib/libtelnet*.a /home/$USERNAME/hyperion/telnet/lib/${DEST} && \
