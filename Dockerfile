@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM debian:stable-slim
+FROM debian:testing-slim
 
 ENV LD_LIBRARY_PATH=/usr/local/lib
 
@@ -32,6 +32,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     cmake \
     flex \
     gawk \
+    gcc-14 \
     git \
     libatomic1 \
     libbz2-dev \
@@ -56,12 +57,8 @@ RUN cd /home/$USERNAME/ && \
     rm -v /home/$USERNAME/hyperion/decNumber/lib/* && \
     rm -v /home/$USERNAME/hyperion/SoftFloat/lib/* && \
     rm -v /home/$USERNAME/hyperion/telnet/lib/* && \
-    # Get the external modules.
-    banner external modules && \
-    unzip /crypto-master.zip && \
-    unzip /decNumber-master.zip && \
-    unzip /SoftFloat-master.zip && \
-    unzip /telnet-master.zip && \
+    # Use GCC-14 for compilation
+    export CC=gcc-14 && \
     # Figure out the library destination.
     banner "${TARGETARCH}"; \
     banner "$( arch )"; \
@@ -141,7 +138,9 @@ RUN cd /home/$USERNAME/ && \
     fi && \
     banner "Configured"
 
-RUN cd /home/$USERNAME/ && \
+RUN cd /home/$USERNAME/hyperion && \
+    # Use GCC-14 for compilation
+    export CC=gcc-14 && \
     make && \
     make install && \
     # Remove unwanted files. Useful when it's a single step.
@@ -154,6 +153,7 @@ RUN cd /home/$USERNAME/ && \
     cmake \
     flex \
     gawk \
+    gcc-14 \
     git \
     libatomic1 \
     libbz2-dev \
