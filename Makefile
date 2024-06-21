@@ -41,8 +41,8 @@ build_amd64:
 build_arm64:	
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-arm64 --platform=linux/arm64 --progress=plain .
 
-build_armv6:
-	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-armv6 --platform=linux/arm/v6 --progress=plain .
+build_armv6: archives ## Build the ARMv6 image.
+	docker build --build-arg QEMU_CPU=arm1176 -t ${USER}/hercules-base:${IMAGE_TAG}-armv6 --platform=linux/arm/v6 --progress=plain .
 
 build_armv7:
 	docker build -t ${USER}/hercules-base:${IMAGE_TAG}-armv7 --platform=linux/arm/v7 --progress=plain .

@@ -6,6 +6,7 @@ ENV LD_LIBRARY_PATH=/usr/local/lib
 
 LABEL maintainer="Ricardo Bánffy <rbanffy@gmail.com>"
 
+ARG QEMU_CPU
 ARG USERNAME=hercules
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
