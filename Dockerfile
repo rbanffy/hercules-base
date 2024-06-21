@@ -91,11 +91,11 @@ RUN cd /home/$USERNAME/ && \
     mkdir -v /home/$USERNAME/crypto32.Release && \
     cd /home/$USERNAME/crypto32.Release && \
     cmake --trace-expand ../crypto-master && \
-    make install && \
+    make VERBOSE=1 install && \
     mkdir -v /home/$USERNAME/crypto64.Release && \
     cd /home/$USERNAME/crypto64.Release && \
     cmake --trace-expand ../crypto-master && \
-    make install && \
+    make VERBOSE=1 install && \
     mkdir -pv /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
     cp -v /usr/local/lib/libcrypto*.a /home/$USERNAME/hyperion/crypto/lib/${DEST} && \
     # Build the external decNumber module.
@@ -106,11 +106,11 @@ RUN cd /home/$USERNAME/ && \
     mkdir -v /home/$USERNAME/decNumber32.Release && \
     cd /home/$USERNAME/decNumber32.Release && \
     cmake --trace-expand ../decNumber-master && \
-    make install && \
+    make VERBOSE=1 install && \
     mkdir -v /home/$USERNAME/decNumber64.Release && \
     cd /home/$USERNAME/decNumber64.Release && \
     cmake --trace-expand ../decNumber-master && \
-    make install && \
+    make VERBOSE=1 install && \
     mkdir -pv /home/$USERNAME/hyperion/decNumber/lib/${DEST} && \
     cp -v /usr/local/lib/libdecNumber*.a /home/$USERNAME/hyperion/decNumber/lib/${DEST} && \
     # Build the external SoftFloat module
@@ -120,11 +120,11 @@ RUN cd /home/$USERNAME/ && \
     mkdir -v /home/$USERNAME/SoftFloat32.Release && \
     cd /home/$USERNAME/SoftFloat32.Release && \
     cmake --trace-expand ../SoftFloat-master && \
-    make install && \
+    make VERBOSE=1 install && \
     mkdir -v /home/$USERNAME/SoftFloat64.Release && \
     cd /home/$USERNAME/SoftFloat64.Release && \
     cmake --trace-expand ../SoftFloat-master && \
-    make install && \
+    make VERBOSE=1 install && \
     mkdir -pv /home/$USERNAME/hyperion/SoftFloat/lib/${DEST} && \
     cp -v /usr/local/lib/libSoftFloat*.a /home/$USERNAME/hyperion/SoftFloat/lib/${DEST} && \
     # Build the external telnet module
@@ -134,11 +134,11 @@ RUN cd /home/$USERNAME/ && \
     mkdir -v /home/$USERNAME/telnet32.Release && \
     cd /home/$USERNAME/telnet32.Release && \
     cmake --trace-expand ../telnet-master && \
-    make install && \
+    make VERBOSE=1 install && \
     mkdir -v /home/$USERNAME/telnet64.Release && \
     cd /home/$USERNAME/telnet64.Release && \
     cmake --trace-expand ../telnet-master && \
-    make install && \
+    make VERBOSE=1 install && \
     mkdir -pv /home/$USERNAME/hyperion/telnet/lib/${DEST} && \
     cp -v /usr/local/lib/libtelnet*.a /home/$USERNAME/hyperion/telnet/lib/${DEST} && \
     # Build Hercules itself
@@ -155,7 +155,7 @@ RUN cd /home/$USERNAME/hyperion && \
     # Use GCC-14 for compilation
     export CC=gcc-14 && \
     make && \
-    make install && \
+    make VERBOSE=1 install && \
     # Remove unwanted files. Useful when it's a single step.
     apt purge -y \
     apt-utils \
