@@ -153,7 +153,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
 RUN cd /home/$USERNAME/hyperion && \
     # Use GCC-14 for compilation
     export CC=gcc-14 && \
-    make && \
     make VERBOSE=1 install && \
     # Remove unwanted files. Useful when it's a single step.
     apt purge -y \
