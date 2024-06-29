@@ -46,9 +46,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
     unzip \
     wget \
     zlib1g-dev && \
-    banner "Updated"
-
-RUN cd /home/$USERNAME/ && \
+    banner "Updated" && \
+    cd /home/$USERNAME/ && \
     # Get the main repo.
     unzip /hyperion-master.zip && \
     mv -v hyperion-master hyperion && \

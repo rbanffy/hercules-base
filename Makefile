@@ -1,4 +1,4 @@
-.PHONY: help build build_amd64 build_arm64 build_armv6 build_armv7 build_ppc64le build_s390x upload upload_images 
+.PHONY: help build build_amd64 build_arm64 build_armv6 build_armv7 build_ppc64le build_s390x upload upload_images
 .DEFAULT_GOAL := help
 
 SHELL = /bin/sh
@@ -69,6 +69,7 @@ build_ppc64le: archives ## Build the PPC64el image.
 upload_images: ## Upload the docker images.
 	docker image push ${USER}/hercules-base:${IMAGE_TAG}-amd64
 	docker image push ${USER}/hercules-base:${IMAGE_TAG}-arm64
+	docker image push ${USER}/hercules-base:${IMAGE_TAG}-armv6
 	docker image push ${USER}/hercules-base:${IMAGE_TAG}-armv7
 	docker image push ${USER}/hercules-base:${IMAGE_TAG}-s390x
 	docker image push ${USER}/hercules-base:${IMAGE_TAG}-ppc64le
@@ -77,6 +78,7 @@ upload: upload_images ## Upload the manifest.
 	docker manifest create ${USER}/hercules-base:${IMAGE_TAG} \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-amd64 \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-arm64 \
+		--amend ${USER}/hercules-base:${IMAGE_TAG}-armv6 \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-armv7 \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-s390x \
 		--amend ${USER}/hercules-base:${IMAGE_TAG}-ppc64le
